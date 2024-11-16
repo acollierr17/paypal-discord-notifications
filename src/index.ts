@@ -1,9 +1,17 @@
 export interface Env {
 	DISCORD_WEBHOOK_URL: string;
+	ACCESS_KEY: string;
 }
 
 export default {
 	async fetch(request: Request, env: Env): Promise<Response> {
+		const url = new URL(request.url);
+
+		const accessKey = url.searchParams.get("access_key");
+		if (accessKey !== env.ACCESS_KEY) {
+			return new Response("Unauthorized", { status: 401 });
+		}
+
 		if (request.method !== "POST") {
 			return new Response("Method not allowed", { status: 405 });
 		}
